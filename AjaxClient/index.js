@@ -6,7 +6,8 @@ let currentFormat = "json";
 const Person = {
     Id: 0,
     Name: "",
-    Age: 0,
+    Height: 0,
+    Birthdate: "",
     Email: ""
 }
 
@@ -67,7 +68,7 @@ function setTableHeaderToDefault() {
     const tableHeader = document.getElementById("persons-table-header");
     tableHeader.innerHTML = "";
     const headerRow = document.createElement("tr");
-    headerRow.innerHTML = `<th>Id</th><th>Name</th><th>Age</th><th>Email</th>`;
+    headerRow.innerHTML = `<th>Id</th><th>Name</th><th>Height</th><th>Birthdate</th><th>Email</th>`;
     tableHeader.appendChild(headerRow);
 }
 
@@ -75,7 +76,8 @@ function createXmlPerson(person) {
     let payload = "<Person xmlns=\"http://schemas.datacontract.org/2004/07/MyWebService\">";
     payload += "<Id>" + person.Id + "</Id>";
     payload += "<Name>" + person.Name + "</Name>";
-    payload += "<Age>" + person.Age + "</Age>";
+    payload += "<Height>" + person.Height + "</Height>";
+    payload += "<Birthdate>" + person.Birthdate + "</Birthdate>";
     payload += "<Email>" + person.Email + "</Email>";
     payload += "</Person>";
     console.log(payload);
@@ -106,7 +108,8 @@ function getAllPeopleJson() {
             for (let i = 0; i < response.length; i++) {
                 const person = response[i];
                 const row = document.createElement("tr");
-                row.innerHTML = `<td>${person.Id}</td><td>${person.Name}</td><td>${person.Age}</td><td>${person.Email}</td>`;
+                row.innerHTML = `<td>${person.Id}</td><td>${person.Name}</td><td>${person.Height}</td>
+                    <td>${person.Birthdate}</td><td>${person.Email}</td>`;
                 tableBody.appendChild(row);
             }
         }
@@ -134,7 +137,8 @@ function getAllPeopleXml() {
                 row.innerHTML = `
                     <td>${person.getElementsByTagName("Id")[0].textContent}</td>
                     <td>${person.getElementsByTagName("Name")[0].textContent}</td>
-                    <td>${person.getElementsByTagName("Age")[0].textContent}</td>
+                    <td>${person.getElementsByTagName("Height")[0].textContent}</td>
+                    <td>${person.getElementsByTagName("Birthdate")[0].textContent}</td>
                     <td>${person.getElementsByTagName("Email")[0].textContent}</td>`;
                 tableBody.appendChild(row);
             }
@@ -176,7 +180,8 @@ function getPersonByIdJson() {
                 tableBody.innerHTML = "";
 
                 const row = document.createElement("tr");
-                row.innerHTML = `<td>${response.Id}</td><td>${response.Name}</td><td>${response.Age}</td><td>${response.Email}</td>`;
+                row.innerHTML = `<td>${response.Id}</td><td>${response.Name}</td><td>${response.Age}</td>
+                    <td>${response.Birthdate}</td><td>${response.Email}</td>`;
                 tableBody.appendChild(row);
             } else {
                 setTableHeaderToDefault();
@@ -216,7 +221,8 @@ function getPersonByIdXml() {
                 row.innerHTML = `
                     <td>${person.getElementsByTagName("Id")[0].textContent}</td>
                     <td>${person.getElementsByTagName("Name")[0].textContent}</td>
-                    <td>${person.getElementsByTagName("Age")[0].textContent}</td>
+                    <td>${person.getElementsByTagName("Height")[0].textContent}</td>
+                    <td>${person.getElementsByTagName("Birthdate")[0].textContent}</td>
                     <td>${person.getElementsByTagName("Email")[0].textContent}</td>`;
                 tableBody.appendChild(row);
             } else {
@@ -268,7 +274,8 @@ function getPeopleByNameJson() {
             for (let i = 0; i < response.length; i++) {
                 const person = response[i];
                 const row = document.createElement("tr");
-                row.innerHTML = `<td>${person.Id}</td><td>${person.Name}</td><td>${person.Age}</td><td>${person.Email}</td>`;
+                row.innerHTML = `<td>${person.Id}</td><td>${person.Name}</td><td>${person.Height}</td>
+                    <td>${person.Birthdate}</td><td>${person.Email}</td>`;
                 tableBody.appendChild(row);
             }
         }
@@ -297,7 +304,8 @@ function getPeopleByNameXml() {
                 row.innerHTML = `
                     <td>${person.getElementsByTagName("Id")[0].textContent}</td>
                     <td>${person.getElementsByTagName("Name")[0].textContent}</td>
-                    <td>${person.getElementsByTagName("Age")[0].textContent}</td>
+                    <td>${person.getElementsByTagName("Height")[0].textContent}</td>
+                    <td>${person.getElementsByTagName("Birthdate")[0].textContent}</td>
                     <td>${person.getElementsByTagName("Email")[0].textContent}</td>`;
                 tableBody.appendChild(row);
             }
@@ -409,7 +417,8 @@ function addPersonJson(person) {
                 if (this.status === 400) {
                     showMessage('error', 'Bad request. Please check the data.');
                 } else if (this.status === 409) {
-                    showMessage('error', `A person with name=${person.Name}, age=${person.Age}, email=${person.Email} already exists.`);
+                    showMessage('error', `A person with name=${person.Name}, height=${person.Height}, 
+                        birthdate=${person.Birthdate}, email=${person.Email} already exists.`);
                 }
                 else {
                     showMessage('error', 'An error occurred. Please try again later.');
@@ -438,7 +447,8 @@ function addPersonXml(person) {
                 if (this.status === 400) {
                     showMessage('error', 'Bad request. Please check the data.');
                 } else if (this.status === 409) {
-                    showMessage('error', `A person with name=${person.Name}, age=${person.Age}, email=${person.Email} already exists.`);
+                    showMessage('error', `A person with name=${person.Name}, height=${person.Height}, 
+                        birthdate=${person.Birthdate}, email=${person.Email} already exists.`);
                 }
                 else {
                     showMessage('error', 'An error occurred. Please try again later.');
@@ -456,7 +466,8 @@ document.getElementById("addBtn").addEventListener("click", function() {
     removeInputsFromForm();
     document.getElementById("form-title").textContent = "Add Person";
     createInputLabel("Name", "name", "text", true);
-    createInputLabel("Age", "age", "number", true, 0, 120);
+    createInputLabel("Height", "height", "number", true, 0, 230);
+    createInputLabel("Birthdate", "birthdate", "date", true, "1900-01-01", Date.now());
     createInputLabel("Email", "email", "email", true);
     toggleForm();
 });
@@ -532,7 +543,8 @@ document.getElementById("updateBtn").addEventListener("click", function() {
     document.getElementById("form-title").textContent = "Update Person";
     createInputLabel( "Id", "id", "number", true);
     createInputLabel("Name", "name", "text", true);
-    createInputLabel("Age", "age", "number", true, 0, 120);
+    createInputLabel("Height", "height", "number", true, 0, 230);
+    createInputLabel("Birthdate", "birthdate", "date", true, "1900-01-01", Date.now());
     createInputLabel("Email", "email", "email", true);
     toggleForm();
 });
@@ -623,7 +635,8 @@ document.getElementById("submitBtn").addEventListener("click", function() {
     else if (document.getElementById("form-title").textContent === "Add Person") {
         const person = Person;
         person.Name = document.getElementById("name").value;
-        person.Age = document.getElementById("age").value;
+        person.Height = document.getElementById("height").value;
+        person.Birthdate = document.getElementById("birthdate").value;
         person.Email = document.getElementById("email").value;
         addPerson(person);
     }
@@ -631,7 +644,8 @@ document.getElementById("submitBtn").addEventListener("click", function() {
         const person = Person;
         person.Id = document.getElementById("id").value;
         person.Name = document.getElementById("name").value;
-        person.Age = document.getElementById("age").value;
+        person.Height = document.getElementById("height").value;
+        person.Birthdate = document.getElementById("birthdate").value;
         person.Email = document.getElementById("email").value;
         updatePerson(person);
     }

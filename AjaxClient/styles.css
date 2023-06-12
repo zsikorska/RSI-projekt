@@ -53,7 +53,9 @@ button {
 
 input[type="text"],
 input[type="number"],
-input[type="email"] {
+input[type="email"],
+input[type="date"]
+{
     width: 100%;
     padding: 8px;
     border-radius: 4px;
