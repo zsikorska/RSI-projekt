@@ -1,7 +1,4 @@
-const JSON_URL = "http://10.182.127.200:2119/MyRestService.svc/json";
-const XML_URL = "http://10.182.127.200:2119/MyRestService.svc";
-
-let currentFormat = "json";
+const URL = "http://10.182.127.200:2119/MyRestService.svc";
 
 const Person = {
     Id: 0,
@@ -9,11 +6,6 @@ const Person = {
     Height: 0,
     Birthdate: "",
     Email: ""
-}
-
-function changeFormat() {
-    currentFormat = currentFormat === "json" ? "xml" : "json";
-    document.getElementById("operations-header").innerHTML = "Operations (current format: " + currentFormat + ")";
 }
 
 function toggleForm() {
@@ -72,30 +64,10 @@ function setTableHeaderToDefault() {
     tableHeader.appendChild(headerRow);
 }
 
-function createXmlPerson(person) {
-    let payload = "<Person xmlns=\"http://schemas.datacontract.org/2004/07/MyWebService\">";
-    payload += "<Id>" + person.Id + "</Id>";
-    payload += "<Name>" + person.Name + "</Name>";
-    payload += "<Height>" + person.Height + "</Height>";
-    payload += "<Birthdate>" + person.Birthdate + "</Birthdate>";
-    payload += "<Email>" + person.Email + "</Email>";
-    payload += "</Person>";
-    console.log(payload);
-    return payload;
-}
 
 function getAllPeople() {
-    if(currentFormat === "json") {
-        getAllPeopleJson();
-    }
-    else {
-        getAllPeopleXml();
-    }
-}
-
-function getAllPeopleJson() {
     const xhr = new XMLHttpRequest();
-    const endpoint = JSON_URL + "/persons";
+    const endpoint = URL + "/persons";
     xhr.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
             const response = JSON.parse(this.responseText);
@@ -118,55 +90,17 @@ function getAllPeopleJson() {
     xhr.send();
 }
 
-function getAllPeopleXml() {
-    const xhr = new XMLHttpRequest();
-    const endpoint = XML_URL + "/persons";
-    xhr.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-            const response = this.responseXML;
-            console.log(response);
-            const persons = response.getElementsByTagName("Person");
-            setTableHeaderToDefault();
-
-            const tableBody = document.getElementById("persons-list");
-            tableBody.innerHTML = "";
-
-            for (let i = 0; i < persons.length; i++) {
-                const person = persons[i];
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${person.getElementsByTagName("Id")[0].textContent}</td>
-                    <td>${person.getElementsByTagName("Name")[0].textContent}</td>
-                    <td>${person.getElementsByTagName("Height")[0].textContent}</td>
-                    <td>${person.getElementsByTagName("Birthdate")[0].textContent}</td>
-                    <td>${person.getElementsByTagName("Email")[0].textContent}</td>`;
-                tableBody.appendChild(row);
-            }
-        }
-    };
-    xhr.open("GET", endpoint, true);
-    xhr.send();
-}
-
 
 document.getElementById("getAllBtn").addEventListener("click", function() {
     hideForm();
     getAllPeople();
 });
 
-function getPersonById() {
-    if (currentFormat === "json") {
-        getPersonByIdJson();
-    }
-    else {
-        getPersonByIdXml();
-    }
-}
 
-function getPersonByIdJson() {
+function getPersonById() {
     const xhr = new XMLHttpRequest();
     const id = document.getElementById("id").value;
-    const endpoint = JSON_URL + "/persons/" + id;
+    const endpoint = URL + "/persons/" + id;
     console.log(endpoint);
     xhr.onreadystatechange = function() {
         if (this.readyState === 4) {
@@ -200,46 +134,6 @@ function getPersonByIdJson() {
     xhr.send();
 }
 
-function getPersonByIdXml() {
-    const xhr = new XMLHttpRequest();
-    const id = document.getElementById("id").value;
-    const endpoint = XML_URL + "/persons/" + id;
-    console.log(endpoint);
-    xhr.onreadystatechange = function() {
-        if (this.readyState === 4) {
-            if (this.status === 200) {
-                const response = this.responseXML;
-                console.log(response);
-                showMessage('success', `Person with id=${id} found.`)
-                const person = response.getElementsByTagName("Person")[0];
-                setTableHeaderToDefault();
-
-                const tableBody = document.getElementById("persons-list");
-                tableBody.innerHTML = "";
-
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${person.getElementsByTagName("Id")[0].textContent}</td>
-                    <td>${person.getElementsByTagName("Name")[0].textContent}</td>
-                    <td>${person.getElementsByTagName("Height")[0].textContent}</td>
-                    <td>${person.getElementsByTagName("Birthdate")[0].textContent}</td>
-                    <td>${person.getElementsByTagName("Email")[0].textContent}</td>`;
-                tableBody.appendChild(row);
-            } else {
-                const tableBody = document.getElementById("persons-list");
-                tableBody.innerHTML = "";
-                if (this.status === 404) {
-                    showMessage('error', `A person with this id=${id} does not exist.`);
-                }
-                else {
-                    showMessage('error', 'An error occurred. Please try again later.');
-                }
-            }
-        }
-    };
-    xhr.open("GET", endpoint, true);
-    xhr.send();
-}
 
 document.getElementById("getByIdBtn").addEventListener("click", function() {
     hideForm();
@@ -249,18 +143,10 @@ document.getElementById("getByIdBtn").addEventListener("click", function() {
     toggleForm();
 });
 
-function getPeopleByName() {
-    if (currentFormat === "json") {
-        getPeopleByNameJson();
-    }
-    else {
-        getPeopleByNameXml();
-    }
-}
 
-function getPeopleByNameJson() {
+function getPeopleByName() {
     const xhr = new XMLHttpRequest();
-    const endpoint = JSON_URL + "/persons/name/" + document.getElementById("name").value;
+    const endpoint = URL + "/persons/name/" + document.getElementById("name").value;
     console.log(endpoint);
     xhr.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
@@ -284,36 +170,6 @@ function getPeopleByNameJson() {
     xhr.send();
 }
 
-function getPeopleByNameXml() {
-    const xhr = new XMLHttpRequest();
-    const endpoint = XML_URL + "/persons/name/" + document.getElementById("name").value;
-    console.log(endpoint);
-    xhr.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-            const response = this.responseXML;
-            console.log(response);
-            const persons = response.getElementsByTagName("Person");
-            setTableHeaderToDefault();
-
-            const tableBody = document.getElementById("persons-list");
-            tableBody.innerHTML = "";
-
-            for (let i = 0; i < persons.length; i++) {
-                const person = persons[i];
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${person.getElementsByTagName("Id")[0].textContent}</td>
-                    <td>${person.getElementsByTagName("Name")[0].textContent}</td>
-                    <td>${person.getElementsByTagName("Height")[0].textContent}</td>
-                    <td>${person.getElementsByTagName("Birthdate")[0].textContent}</td>
-                    <td>${person.getElementsByTagName("Email")[0].textContent}</td>`;
-                tableBody.appendChild(row);
-            }
-        }
-    };
-    xhr.open("GET", endpoint, true);
-    xhr.send();
-}
 
 document.getElementById("filterByNameBtn").addEventListener("click", function() {
     hideForm();
@@ -323,18 +179,10 @@ document.getElementById("filterByNameBtn").addEventListener("click", function() 
     toggleForm();
 });
 
-function getNumberOfPeople() {
-    if (currentFormat === "json") {
-        getNumberOfPeopleJson();
-    }
-    else {
-        getNumberOfPeopleXml();
-    }
-}
 
-function getNumberOfPeopleJson() {
+function getNumberOfPeople() {
     const xhr = new XMLHttpRequest();
-    const endpoint = JSON_URL + "/persons/size";
+    const endpoint = URL + "/persons/size";
     console.log(endpoint);
     xhr.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
@@ -359,50 +207,16 @@ function getNumberOfPeopleJson() {
     xhr.send();
 }
 
-function getNumberOfPeopleXml() {
-    const xhr = new XMLHttpRequest();
-    const endpoint = XML_URL + "/persons/size";
-    console.log(endpoint);
-    xhr.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-            const response = this.responseXML;
-            console.log(response);
-
-            const tableHeader = document.getElementById("persons-table-header");
-            tableHeader.innerHTML = "";
-            const headerRow = document.createElement("tr");
-            headerRow.innerHTML = `<th>Number of People</th>`;
-            tableHeader.appendChild(headerRow);
-
-            const tableBody = document.getElementById("persons-list");
-            tableBody.innerHTML = "";
-
-            const row = document.createElement("tr");
-            row.innerHTML = `<td>${response.getElementsByTagName("int")[0].textContent}</td>`;
-            tableBody.appendChild(row);
-        }
-    };
-    xhr.open("GET", endpoint, true);
-    xhr.send();
-}
 
 document.getElementById("countBtn").addEventListener("click", function() {
     hideForm();
     getNumberOfPeople();
 });
 
-function addPerson(person) {
-    if (currentFormat === "json") {
-        addPersonJson(person);
-    }
-    else {
-        addPersonXml(person);
-    }
-}
 
-function addPersonJson(person) {
+function addPerson(person) {
     const xhr = new XMLHttpRequest();
-    const endpoint = JSON_URL + "/persons";
+    const endpoint = URL + "/persons";
     console.log(endpoint);
     console.log(person);
     console.log(JSON.stringify(person));
@@ -431,35 +245,6 @@ function addPersonJson(person) {
     xhr.send(JSON.stringify(person));
 }
 
-function addPersonXml(person) {
-    const xhr = new XMLHttpRequest();
-    const endpoint = XML_URL + "/persons";
-    console.log(endpoint);
-    console.log(person);
-    xhr.onreadystatechange = function() {
-        if (this.readyState === 4) {
-            getAllPeople();
-            if (this.status === 200 || this.status === 201) {
-                const response = this.responseXML;
-                console.log(response);
-                showMessage('success', `Person added successfully!`);
-            } else {
-                if (this.status === 400) {
-                    showMessage('error', 'Bad request. Please check the data.');
-                } else if (this.status === 409) {
-                    showMessage('error', `A person with name=${person.Name}, height=${person.Height}, 
-                        birthdate=${person.Birthdate}, email=${person.Email} already exists.`);
-                }
-                else {
-                    showMessage('error', 'An error occurred. Please try again later.');
-                }
-            }
-        }
-    };
-    xhr.open("POST", endpoint, true);
-    xhr.setRequestHeader("Content-Type", "application/xml");
-    xhr.send(createXmlPerson(person));
-}
 
 document.getElementById("addBtn").addEventListener("click", function() {
     hideForm();
@@ -472,18 +257,10 @@ document.getElementById("addBtn").addEventListener("click", function() {
     toggleForm();
 });
 
-function updatePerson(person) {
-    if (currentFormat === "json") {
-        updatePersonJson(person);
-    }
-    else {
-        updatePersonXml(person);
-    }
-}
 
-function updatePersonJson(person) {
+function updatePerson(person) {
     const xhr = new XMLHttpRequest();
-    const endpoint = JSON_URL + "/persons";
+    const endpoint = URL + "/persons";
     console.log(endpoint);
     console.log(person);
     console.log(JSON.stringify(person));
@@ -509,33 +286,6 @@ function updatePersonJson(person) {
     xhr.send(JSON.stringify(person));
 }
 
-function updatePersonXml(person) {
-    const xhr = new XMLHttpRequest();
-    const endpoint = XML_URL + "/persons";
-    console.log(endpoint);
-    console.log(person);
-    console.log(JSON.stringify(person));
-    xhr.onreadystatechange = function() {
-        if (this.readyState === 4) {
-            getAllPeople();
-            if (this.status === 200) {
-                const response = this.responseXML;
-                console.log(response);
-                showMessage('success', `Person with id=${person.Id} updated successfully!`);
-            } else {
-                if (this.status === 404) {
-                    showMessage('error', `A person with id=${person.Id} does not exist.`);
-                }
-                else {
-                    showMessage('error', 'An error occurred. Please try again later.');
-                }
-            }
-        }
-    };
-    xhr.open("PUT", endpoint, true);
-    xhr.setRequestHeader("Content-Type", "application/xml");
-    xhr.send(createXmlPerson(person));
-}
 
 document.getElementById("updateBtn").addEventListener("click", function() {
     hideForm();
@@ -549,18 +299,10 @@ document.getElementById("updateBtn").addEventListener("click", function() {
     toggleForm();
 });
 
-function deletePerson(id) {
-    if (currentFormat === "json") {
-        deletePersonJson(id);
-    }
-    else {
-        deletePersonXml(id);
-    }
-}
 
-function deletePersonJson(id) {
+function deletePerson(id) {
     const xhr = new XMLHttpRequest();
-    const endpoint = JSON_URL + "/persons/" + id;
+    const endpoint = URL + "/persons/" + id;
     console.log(endpoint);
     xhr.onreadystatechange = function() {
         if (this.readyState === 4) {
@@ -583,30 +325,6 @@ function deletePersonJson(id) {
     xhr.send();
 }
 
-function deletePersonXml(id) {
-    const xhr = new XMLHttpRequest();
-    const endpoint = XML_URL + "/persons/" + id;
-    console.log(endpoint);
-    xhr.onreadystatechange = function() {
-        if (this.readyState === 4) {
-            getAllPeople();
-            if (this.status === 200) {
-                const response = this.responseXML;
-                console.log(response);
-                showMessage('success', `Person with id=${id} deleted successfully!`);
-            } else {
-                if (this.status === 404) {
-                    showMessage('error', `A person with id=${id} does not exist.`);
-                }
-                else {
-                    showMessage('error', 'An error occurred. Please try again later.');
-                }
-            }
-        }
-    };
-    xhr.open("DELETE", endpoint, true);
-    xhr.send();
-}
 
 document.getElementById("deleteBtn").addEventListener("click", function() {
     hideForm();
@@ -614,12 +332,6 @@ document.getElementById("deleteBtn").addEventListener("click", function() {
     document.getElementById("form-title").textContent = "Delete Person";
     createInputLabel( "Id", "id", "number", true);
     toggleForm();
-});
-
-document.getElementById("changeFormatBtn").addEventListener("click", function() {
-    hideForm();
-    changeFormat();
-    showMessage('success', 'Format changed successfully!');
 });
 
 
@@ -691,18 +403,9 @@ document.getElementById("printAuthorsBtn").addEventListener("click", function() 
 });
 
 
-function printAuthors(){
-    if (currentFormat === "json") {
-        printAuthorsJson();
-    }
-    else {
-        printAuthorsXml();
-    }
-}
-
-function printAuthorsJson() {
+function printAuthors() {
     const xhr = new XMLHttpRequest();
-    const endpoint = JSON_URL + "/authors";
+    const endpoint = URL + "/authors";
     console.log(endpoint);
     xhr.onreadystatechange = function() {
         if (this.readyState === 4) {
@@ -721,37 +424,6 @@ function printAuthorsJson() {
 
                 const row = document.createElement("tr");
                 row.innerHTML = `<td>${response}</td>`;
-                tableBody.appendChild(row);
-            } else {
-                showMessage('error', 'An error occurred. Please try again later.');
-            }
-        }
-    };
-    xhr.open("GET", endpoint, true);
-    xhr.send();
-}
-
-function printAuthorsXml() {
-    const xhr = new XMLHttpRequest();
-    const endpoint = XML_URL + "/authors";
-    console.log(endpoint);
-    xhr.onreadystatechange = function() {
-        if (this.readyState === 4) {
-            if (this.status === 200) {
-                const response = this.responseXML;
-                console.log(response);
-
-                const tableHeader = document.getElementById("persons-table-header");
-                tableHeader.innerHTML = "";
-                const headerRow = document.createElement("tr");
-                headerRow.innerHTML = `<th>Authors</th>`;
-                tableHeader.appendChild(headerRow);
-
-                const tableBody = document.getElementById("persons-list");
-                tableBody.innerHTML = "";
-
-                const row = document.createElement("tr");
-                row.innerHTML = `<td>${response.getElementsByTagName("string")[0].textContent}</td>`;
                 tableBody.appendChild(row);
             } else {
                 showMessage('error', 'An error occurred. Please try again later.');
