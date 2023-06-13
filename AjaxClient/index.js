@@ -1,11 +1,11 @@
-const URL = "http://10.182.127.200:2119/MyRestService.svc";
+const URL = "https://rsiminiprojekt.azurewebsites.net/persons/";
 
 const Person = {
-    Id: 0,
-    Name: "",
-    Height: 0,
-    Birthdate: "",
-    Email: ""
+    id: 0,
+    name: "",
+    height: 0,
+    birthdate: "",
+    email: ""
 }
 
 function toggleForm() {
@@ -67,7 +67,7 @@ function setTableHeaderToDefault() {
 
 function getAllPeople() {
     const xhr = new XMLHttpRequest();
-    const endpoint = URL + "/persons";
+    const endpoint = URL;
     xhr.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
             const response = JSON.parse(this.responseText);
@@ -80,8 +80,8 @@ function getAllPeople() {
             for (let i = 0; i < response.length; i++) {
                 const person = response[i];
                 const row = document.createElement("tr");
-                row.innerHTML = `<td>${person.Id}</td><td>${person.Name}</td><td>${person.Height}</td>
-                    <td>${person.Birthdate}</td><td>${person.Email}</td>`;
+                row.innerHTML = `<td>${person.id}</td><td>${person.name}</td><td>${person.height}</td>
+                    <td>${person.birthdate}</td><td>${person.email}</td>`;
                 tableBody.appendChild(row);
             }
         }
@@ -100,7 +100,7 @@ document.getElementById("getAllBtn").addEventListener("click", function() {
 function getPersonById() {
     const xhr = new XMLHttpRequest();
     const id = document.getElementById("id").value;
-    const endpoint = URL + "/persons/" + id;
+    const endpoint = URL + id;
     console.log(endpoint);
     xhr.onreadystatechange = function() {
         if (this.readyState === 4) {
@@ -114,8 +114,8 @@ function getPersonById() {
                 tableBody.innerHTML = "";
 
                 const row = document.createElement("tr");
-                row.innerHTML = `<td>${response.Id}</td><td>${response.Name}</td><td>${response.Age}</td>
-                    <td>${response.Birthdate}</td><td>${response.Email}</td>`;
+                row.innerHTML = `<td>${response.id}</td><td>${response.name}</td><td>${response.age}</td>
+                    <td>${response.birthdate}</td><td>${response.email}</td>`;
                 tableBody.appendChild(row);
             } else {
                 setTableHeaderToDefault();
@@ -146,7 +146,7 @@ document.getElementById("getByIdBtn").addEventListener("click", function() {
 
 function getPeopleByName() {
     const xhr = new XMLHttpRequest();
-    const endpoint = URL + "/persons/name/" + document.getElementById("name").value;
+    const endpoint = URL + "name/" + document.getElementById("name").value;
     console.log(endpoint);
     xhr.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
@@ -160,8 +160,8 @@ function getPeopleByName() {
             for (let i = 0; i < response.length; i++) {
                 const person = response[i];
                 const row = document.createElement("tr");
-                row.innerHTML = `<td>${person.Id}</td><td>${person.Name}</td><td>${person.Height}</td>
-                    <td>${person.Birthdate}</td><td>${person.Email}</td>`;
+                row.innerHTML = `<td>${person.id}</td><td>${person.name}</td><td>${person.height}</td>
+                    <td>${person.birthdate}</td><td>${person.email}</td>`;
                 tableBody.appendChild(row);
             }
         }
@@ -182,7 +182,7 @@ document.getElementById("filterByNameBtn").addEventListener("click", function() 
 
 function getNumberOfPeople() {
     const xhr = new XMLHttpRequest();
-    const endpoint = URL + "/persons/size";
+    const endpoint = URL + "size";
     console.log(endpoint);
     xhr.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
@@ -216,7 +216,7 @@ document.getElementById("countBtn").addEventListener("click", function() {
 
 function addPerson(person) {
     const xhr = new XMLHttpRequest();
-    const endpoint = URL + "/persons";
+    const endpoint = URL;
     console.log(endpoint);
     console.log(person);
     console.log(JSON.stringify(person));
@@ -231,8 +231,8 @@ function addPerson(person) {
                 if (this.status === 400) {
                     showMessage('error', 'Bad request. Please check the data.');
                 } else if (this.status === 409) {
-                    showMessage('error', `A person with name=${person.Name}, height=${person.Height}, 
-                        birthdate=${person.Birthdate}, email=${person.Email} already exists.`);
+                    showMessage('error', `A person with name=${person.name}, height=${person.height}, 
+                        birthdate=${person.birthdate}, email=${person.email} already exists.`);
                 }
                 else {
                     showMessage('error', 'An error occurred. Please try again later.');
@@ -260,7 +260,7 @@ document.getElementById("addBtn").addEventListener("click", function() {
 
 function updatePerson(person) {
     const xhr = new XMLHttpRequest();
-    const endpoint = URL + "/persons";
+    const endpoint = URL;
     console.log(endpoint);
     console.log(person);
     console.log(JSON.stringify(person));
@@ -270,10 +270,10 @@ function updatePerson(person) {
             if (this.status === 200) {
                 const response = JSON.parse(this.responseText);
                 console.log(response);
-                showMessage('success', `Person with id=${person.Id} updated successfully!`);
+                showMessage('success', `Person with id=${person.id} updated successfully!`);
             } else {
                 if (this.status === 404) {
-                    showMessage('error', `A person with id=${person.Id} does not exist.`);
+                    showMessage('error', `A person with id=${person.id} does not exist.`);
                 }
                 else {
                     showMessage('error', 'An error occurred. Please try again later.');
@@ -302,7 +302,7 @@ document.getElementById("updateBtn").addEventListener("click", function() {
 
 function deletePerson(id) {
     const xhr = new XMLHttpRequest();
-    const endpoint = URL + "/persons/" + id;
+    const endpoint = URL + id;
     console.log(endpoint);
     xhr.onreadystatechange = function() {
         if (this.readyState === 4) {
@@ -346,19 +346,19 @@ document.getElementById("submitBtn").addEventListener("click", function() {
     }
     else if (document.getElementById("form-title").textContent === "Add Person") {
         const person = Person;
-        person.Name = document.getElementById("name").value;
-        person.Height = document.getElementById("height").value;
-        person.Birthdate = document.getElementById("birthdate").value;
-        person.Email = document.getElementById("email").value;
+        person.name = document.getElementById("name").value;
+        person.height = document.getElementById("height").value;
+        person.birthdate = document.getElementById("birthdate").value;
+        person.email = document.getElementById("email").value;
         addPerson(person);
     }
     else if (document.getElementById("form-title").textContent === "Update Person") {
         const person = Person;
-        person.Id = document.getElementById("id").value;
-        person.Name = document.getElementById("name").value;
-        person.Height = document.getElementById("height").value;
-        person.Birthdate = document.getElementById("birthdate").value;
-        person.Email = document.getElementById("email").value;
+        person.id = document.getElementById("id").value;
+        person.name = document.getElementById("name").value;
+        person.height = document.getElementById("height").value;
+        person.birthdate = document.getElementById("birthdate").value;
+        person.email = document.getElementById("email").value;
         updatePerson(person);
     }
     else if (document.getElementById("form-title").textContent === "Delete Person") {
@@ -405,12 +405,13 @@ document.getElementById("printAuthorsBtn").addEventListener("click", function() 
 
 function printAuthors() {
     const xhr = new XMLHttpRequest();
-    const endpoint = URL + "/authors";
+    const endpoint = URL + "authors";
     console.log(endpoint);
     xhr.onreadystatechange = function() {
         if (this.readyState === 4) {
             if (this.status === 200) {
-                const response = JSON.parse(this.responseText);
+                console.log(this.responseText)
+                const response = this.responseText;
                 console.log(response);
 
                 const tableHeader = document.getElementById("persons-table-header");
