@@ -2,12 +2,21 @@ using Backend.Data;
 using BlogManager.Data;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(MyAllowSpecificOrigins, policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddSwaggerGen(options =>
     options.MapType<DateOnly>(() => new OpenApiSchema
     {
@@ -17,9 +26,7 @@ builder.Services.AddSwaggerGen(options =>
     })
 );
 
-
 builder.Services.AddDbContext<AppDbContext>();
-
 
 var app = builder.Build();
 
@@ -35,11 +42,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
+app.UseCors(MyAllowSpecificOrigins);
+
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseCors(builder => builder.AllowAnyOrigin());
 
 app.Run();
 
