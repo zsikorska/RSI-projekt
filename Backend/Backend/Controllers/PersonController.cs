@@ -46,7 +46,8 @@ namespace Backend.Controllers
             {
                 try
                 {
-                    _context.Update(person);
+                    _context.Entry(p).CurrentValues.SetValues(person);
+                    p = person;
                     await _context.SaveChangesAsync();
                     return Ok();
                 }
@@ -59,7 +60,7 @@ namespace Backend.Controllers
                     return StatusCode(500);
                 }
             }
-            return BadRequest();
+            return Ok();
         }
 
         [HttpPost]
@@ -95,6 +96,7 @@ namespace Backend.Controllers
                 return NotFound();
             }
             _context.Persons.Remove(p);
+            await _context.SaveChangesAsync();
             return Ok();
         }
 

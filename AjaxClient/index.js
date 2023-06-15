@@ -114,7 +114,7 @@ function getPersonById() {
                 tableBody.innerHTML = "";
 
                 const row = document.createElement("tr");
-                row.innerHTML = `<td>${response.id}</td><td>${response.name}</td><td>${response.age}</td>
+                row.innerHTML = `<td>${response.id}</td><td>${response.name}</td><td>${response.height}</td>
                     <td>${response.birthdate}</td><td>${response.email}</td>`;
                 tableBody.appendChild(row);
             } else {
@@ -268,8 +268,6 @@ function updatePerson(person) {
         if (this.readyState === 4) {
             getAllPeople();
             if (this.status === 200) {
-                const response = JSON.parse(this.responseText);
-                console.log(response);
                 showMessage('success', `Person with id=${person.id} updated successfully!`);
             } else {
                 if (this.status === 404) {
@@ -308,8 +306,6 @@ function deletePerson(id) {
         if (this.readyState === 4) {
             getAllPeople();
             if (this.status === 200) {
-                const response = JSON.parse(this.responseText);
-                console.log(response);
                 showMessage('success', `Person with id=${id} deleted successfully!`);
             } else {
                 if (this.status === 404) {
@@ -346,6 +342,7 @@ document.getElementById("submitBtn").addEventListener("click", function() {
     }
     else if (document.getElementById("form-title").textContent === "Add Person") {
         const person = Person;
+        person.id = 0;
         person.name = document.getElementById("name").value;
         person.height = document.getElementById("height").value;
         person.birthdate = document.getElementById("birthdate").value;
