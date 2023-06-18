@@ -64,6 +64,43 @@ function setTableHeaderToDefault() {
     tableHeader.appendChild(headerRow);
 }
 
+function validateForm() {
+    const name = document.getElementById("name").value;
+    const height = document.getElementById("height").value;
+    const birthdate = document.getElementById("birthdate").value;
+    const email = document.getElementById("email").value;
+
+    if (name === "" || height === "" || birthdate === "" || email === "") {
+        showMessage('error', 'All fields are required.');
+        return false;
+    }
+
+    if (!/^[a-zA-Z]+$/.test(name)) {
+        showMessage('error', 'Name must contain only letters.');
+        return false;
+    }
+
+    if (height < 40 || height > 230) {
+        showMessage('error', 'Height must be between 40cm and 230cm.');
+        return false;
+    }
+
+    const today = new Date();
+    const birthdateDate = new Date(birthdate);
+    const minDate = new Date("1900-01-01");
+    if (birthdateDate < minDate || birthdateDate > today) {
+        showMessage('error', 'Birthdate must be later than 1900-01-01 and earlier than today.');
+        return false;
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+        showMessage('error', 'Email must be in a valid format.');
+        return false;
+    }
+
+    return true;
+}
+
 
 function getAllPeople() {
     const xhr = new XMLHttpRequest();
@@ -251,8 +288,8 @@ document.getElementById("addBtn").addEventListener("click", function() {
     removeInputsFromForm();
     document.getElementById("form-title").textContent = "Add Person";
     createInputLabel("Name", "name", "text", true);
-    createInputLabel("Height", "height", "number", true, 0, 230);
-    createInputLabel("Birthdate", "birthdate", "date", true, "1900-01-01", Date.now());
+    createInputLabel("Height", "height", "number", true, 40, 230);
+    createInputLabel("Birthdate", "birthdate", "date", true, "1900-01-01");
     createInputLabel("Email", "email", "email", true);
     toggleForm();
 });
@@ -291,8 +328,8 @@ document.getElementById("updateBtn").addEventListener("click", function() {
     document.getElementById("form-title").textContent = "Update Person";
     createInputLabel( "Id", "id", "number", true);
     createInputLabel("Name", "name", "text", true);
-    createInputLabel("Height", "height", "number", true, 0, 230);
-    createInputLabel("Birthdate", "birthdate", "date", true, "1900-01-01", Date.now());
+    createInputLabel("Height", "height", "number", true, 40, 230);
+    createInputLabel("Birthdate", "birthdate", "date", true, "1900-01-01");
     createInputLabel("Email", "email", "email", true);
     toggleForm();
 });
@@ -335,34 +372,42 @@ document.getElementById("submitBtn").addEventListener("click", function() {
     if (document.getElementById("form-title").textContent === "Get Person by Id") {
         const id = document.getElementById("id").value;
         getPersonById(id);
+        hideForm();
     }
     else if (document.getElementById("form-title").textContent === "Filter People by Name") {
         const name = document.getElementById("name").value;
         getPeopleByName(name);
+        hideForm();
     }
     else if (document.getElementById("form-title").textContent === "Add Person") {
-        const person = Person;
-        person.id = 0;
-        person.name = document.getElementById("name").value;
-        person.height = document.getElementById("height").value;
-        person.birthdate = document.getElementById("birthdate").value;
-        person.email = document.getElementById("email").value;
-        addPerson(person);
+        if (validateForm()) {
+            const person = Person;
+            person.id = 0;
+            person.name = document.getElementById("name").value;
+            person.height = document.getElementById("height").value;
+            person.birthdate = document.getElementById("birthdate").value;
+            person.email = document.getElementById("email").value;
+            addPerson(person);
+            hideForm();
+        }
     }
     else if (document.getElementById("form-title").textContent === "Update Person") {
-        const person = Person;
-        person.id = document.getElementById("id").value;
-        person.name = document.getElementById("name").value;
-        person.height = document.getElementById("height").value;
-        person.birthdate = document.getElementById("birthdate").value;
-        person.email = document.getElementById("email").value;
-        updatePerson(person);
+        if (validateForm()) {
+            const person = Person;
+            person.id = document.getElementById("id").value;
+            person.name = document.getElementById("name").value;
+            person.height = document.getElementById("height").value;
+            person.birthdate = document.getElementById("birthdate").value;
+            person.email = document.getElementById("email").value;
+            updatePerson(person);
+            hideForm();
+        }
     }
     else if (document.getElementById("form-title").textContent === "Delete Person") {
         const id = document.getElementById("id").value;
         deletePerson(id);
+        hideForm();
     }
-    hideForm();
 });
 
 
