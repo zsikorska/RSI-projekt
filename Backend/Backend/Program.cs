@@ -1,4 +1,3 @@
-using Backend.Data;
 using BlogManager.Data;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
@@ -31,14 +30,16 @@ builder.Services.AddDbContext<AppDbContext>();
 var app = builder.Build();
 
 var ctx = app.Services.CreateScope().ServiceProvider.GetService<AppDbContext>();
-//DbInitializer.Initialize(ctx);
 ctx.Database.EnsureCreated();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

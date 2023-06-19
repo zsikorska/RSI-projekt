@@ -2,6 +2,8 @@ using Backend.Models;
 using BlogManager.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace Backend.Controllers
 {
@@ -42,6 +44,26 @@ namespace Backend.Controllers
             {
                 return NotFound();
             }
+            if (_context.Persons.Where(p => p.Email == person.Email).FirstOrDefault() != null)
+            {
+                return Conflict();
+            }
+            if (!Regex.IsMatch(person.Name, @"^[a-zA-Z]+$"))
+            {
+                return BadRequest("Invalid name");
+            }
+            if (!Regex.IsMatch(person.Email, @"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"))
+            {
+                return BadRequest("Invalid email");
+            }
+            if (50 > person.Height || 230 < person.Height)
+            {
+                return BadRequest("Invalid height");
+            }
+            if (person.Birthdate.Year < 1900 || person.Birthdate > DateOnly.FromDateTime(DateTime.Now))
+            {
+                return BadRequest("Invalid birthdate");
+            }
             if (ModelState.IsValid)
             {
                 try
@@ -66,6 +88,25 @@ namespace Backend.Controllers
         [HttpPost]
         public async Task<ActionResult<Person>> AddPerson([Bind("Name, Email, Height, Birthdate")] Person person)
         {
+            if(!Regex.IsMatch(person.Name, @"^[a-zA-Z]+$")){
+                return BadRequest("Invalid name");
+            }
+            if (!Regex.IsMatch(person.Email, @"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"))
+            {
+                return BadRequest("Invalid email");
+            }
+            if (50 > person.Height || 230 < person.Height)
+            {
+                return BadRequest("Invalid height");
+            }
+            if(person.Birthdate.Year < 1900 || person.Birthdate > DateOnly.FromDateTime(DateTime.Now))
+            {
+                return BadRequest("Invalid birthdate");
+            }
+            if(_context.Persons.Where(p => p.Email == person.Email).FirstOrDefault() != null)
+            {
+                return Conflict();
+            }
             try
             {
                 if (ModelState.IsValid)

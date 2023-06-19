@@ -9,8 +9,4 @@ public class AppDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
         => options.UseSqlite("DataSource = personsdb.db; Cache=Shared");
-    //protected override void OnModelCreating(ModelBuilder modelBuilder)
-    //{
-    //    modelBuilder.Entity<Person>().ToTable("Person");
-    //}
 }
