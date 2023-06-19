@@ -32,11 +32,6 @@ var app = builder.Build();
 var ctx = app.Services.CreateScope().ServiceProvider.GetService<AppDbContext>();
 ctx.Database.EnsureCreated();
 
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
 
 app.UseSwagger();
 app.UseSwaggerUI();

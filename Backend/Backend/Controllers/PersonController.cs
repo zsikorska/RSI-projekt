@@ -56,7 +56,7 @@ namespace Backend.Controllers
             {
                 return BadRequest("Invalid email");
             }
-            if (50 > person.Height || 230 < person.Height)
+            if (40 > person.Height || 230 < person.Height)
             {
                 return BadRequest("Invalid height");
             }
@@ -73,9 +73,8 @@ namespace Backend.Controllers
                     await _context.SaveChangesAsync();
                     return Ok();
                 }
-                catch (DbUpdateException /* ex */)
+                catch (DbUpdateException)
                 {
-                    //Log the error (uncomment ex variable name and write a log.)
                     ModelState.AddModelError("", "Unable to save changes. " +
                         "Try again, and if the problem persists, " +
                         "see your system administrator.");
@@ -95,7 +94,7 @@ namespace Backend.Controllers
             {
                 return BadRequest("Invalid email");
             }
-            if (50 > person.Height || 230 < person.Height)
+            if (40 > person.Height || 230 < person.Height)
             {
                 return BadRequest("Invalid height");
             }
@@ -117,10 +116,9 @@ namespace Backend.Controllers
                     return person;
                 }
             }
-            catch (DbUpdateException /* ex */)
+            catch (DbUpdateException)
             {
 
-                //Log the error (uncomment ex variable name and write a log.
                 ModelState.AddModelError("", "Unable to save changes. " +
                     "Try again, and if the problem persists " +
                     "see your system administrator.");
